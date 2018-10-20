@@ -292,7 +292,7 @@ public class algorithms {
 		}
 	}
 	
-	//计算点p1与p2之间的距离（没有开方）
+	//计算点p1与p2之间的距离
 	public double caculate(Point p1, Point p2) {
 		double distance = Math.sqrt(Math.pow(p1.getX() - p2.getX(), 2) + Math.pow(p1.getY() - p2.getY(), 2));
 		return distance;
@@ -320,4 +320,231 @@ public class algorithms {
 			QuickSortPointByX(points, s + 1, right);
 		}
 	}
+	
+	//快包算法：使用分治法解决凸包问题
+	public List<Point> QuickHull(Point[]points) {
+		//输入：点集合，按照x坐标升序排列
+		//输出：点集合的凸包	
+		List<Point> result = new ArrayList<Point>();
+		int n = points.length;
+		//点集合为空时，直接返回空链表
+		if(n == 0)
+			return result;
+		//点集合只有1个或者两个时，直接返回点集合
+		if(n == 1 || n == 2) {
+			for(int i = 0; i < n; i++)
+				result.add(points[i]);
+			return result;
+		}
+		//取最左面的点和最右面的点，并且这两个点确定属于凸包
+		Point p1 = points[0];
+		Point pn = points[n - 1];
+		result.add(p1);
+		result.add(pn);
+		//求线段左集合,记为p_left,包含p1,pn端点
+		Point[] p_left = getLeftSet(points, p1, pn);	
+		//求线段右集合，记为p_right,包含p1,pn端点
+		Point[] p_right = getRightSet(points, p1, pn);
+		List<Point> r1 = UpperHull(p_left);
+		List<Point> r2 = lowerHull(p_right);
+		
+		for(int i = 0; i < r1.size(); i++) {
+			if(result.contains(r1.get(i)))
+				continue;
+			result.add(r1.get(i));
+		}
+		
+		for(int i = 0; i < r2.size(); i++) {
+			if(result.contains(r2.get(i)))
+				continue;
+			result.add(r2.get(i));
+		}
+		return result;
+	}
+	
+	//求上包
+	public List<Point> UpperHull(Point[]points){
+		List<Point> result = new ArrayList<Point>();
+		int n = points.length;
+		if(n == 2) {
+			for(int i = 0; i < n; i++)
+				result.add(points[i]);
+			return result;
+		}
+		Point p1 = points[0];
+		Point pn = points[n - 1];
+		Point pmax = getMax(points, p1, pn);
+		result.add(p1);
+		result.add(pn);
+		result.add(pmax);
+		//获取线段左集合，记为p_left,包含p1,pmax端点,右集合并不考虑
+		Point[] p1_left = getLeftSet(points, p1, pmax);
+		
+		//获取线段左集合，记为p_right,包含pmax,pn端点，右集合不考虑
+		Point[] p2_left = getLeftSet(points, pmax, pn);
+		
+		List<Point> r1 = UpperHull(p1_left);
+		List<Point> r2 = UpperHull(p2_left);
+		
+		for(int i = 0; i < r1.size(); i++) {
+			if(result.contains(r1.get(i)))
+				continue;
+			result.add(r1.get(i));
+		}
+		for(int i = 0; i < r2.size(); i++) {
+			if(result.contains(r2.get(i)))
+				continue;
+			result.add(r1.get(i));
+		}
+		return result;
+	}
+	
+	public List<Point> lowerHull(Point[]points){
+		List<Point> result = new ArrayList<Point>();
+		int n = points.length;
+		if(n == 2) {
+			for(int i = 0; i < n; i++)
+				result.add(points[i]);
+			return result;
+		}
+		Point p1 = points[0];
+		Point pn = points[n - 1];
+		Point pmax = getMax(points, p1, pn);
+		result.add(p1);
+		result.add(pn);
+		result.add(pmax);
+		//获取线段右集合，记为p_right,包含p1,pmax端点,右集合并不考虑
+		Point[] p1_right = getRightSet(points, p1, pmax);
+		
+		//获取线段右集合，记为p_right,包含pmax,pn端点，右集合不考虑
+		Point[] p2_right = getRightSet(points, pmax, pn);
+		
+		List<Point> r1 = lowerHull(p1_right);
+		List<Point> r2 = lowerHull(p2_right);
+		
+		for(int i = 0; i < r1.size(); i++) {
+			if(result.contains(r1.get(i)))
+				continue;
+			result.add(r1.get(i));
+		}
+		for(int i = 0; i < r2.size(); i++) {
+			if(result.contains(r2.get(i)))
+				continue;
+			result.add(r1.get(i));
+		}
+		return result;
+	}
+	
+	
+	//获取左子集合
+	public Point[] getLeftSet(Point[]point, Point p1, Point pn) {
+		double x1 = p1.getX();
+		double y1 = p1.getY();
+		double x2 = pn.getX();
+		double y2 = pn.getY();
+		int n = point.length;
+		List<Point> re_list = new ArrayList<Point>();
+		re_list.add(p1);
+		for(int i = 1; i < n - 1; i++) {
+			double x3 = point[i].getX();
+			double y3 = point[i].getY();
+			double s = x1 * y2 + x3 * y1 + x2 * y3 - x3 * y2 - x2 * y1 - x1 * y3;
+			if(s > 0)
+				re_list.add(point[i]);
+		}
+		re_list.add(pn);
+		Point[] result = (Point[])re_list.toArray(new Point[re_list.size()]);
+		return result;
+	}
+	
+	//获取右子集合
+	public Point[] getRightSet(Point[]point, Point p1, Point pn) {
+		double x1 = p1.getX();
+		double y1 = p1.getY();
+		double x2 = pn.getX();
+		double y2 = pn.getY();
+		int n = point.length;
+		List<Point> re_list = new ArrayList<Point>();
+		re_list.add(p1);
+		for(int i = 1; i < n - 1; i++) {
+			double x3 = point[i].getX();
+			double y3 = point[i].getY();
+			double s = x1 * y2 + x3 * y1 + x2 * y3 - x3 * y2 - x2 * y1 - x1 * y3;
+			if(s <= 0)
+				re_list.add(point[i]);
+		}
+		re_list.add(pn);
+		Point[] result = (Point[])re_list.toArray(new Point[re_list.size()]);
+		return result;
+	}
+	
+	
+	public Point getMax(Point[]point, Point p1, Point pn) {
+		double x1 = p1.getX();
+		double y1 = p1.getY();
+		double x2 = pn.getX();
+		double y2 = pn.getY();
+		int n = point.length;
+		Point p = new Point();
+		int index = 0;
+		double s_max = Double.MIN_VALUE;
+		for(int i = 1; i < n - 1; i++) {
+			double x3 = point[i].getX();
+			double y3 = point[i].getY();
+			double s = x1 * y2 + x3 * y1 + x2 * y3 - x3 * y2 - x2 * y1 - x1 * y3;
+			s = Math.abs(s);
+			if(s > s_max)
+				index = i;
+			else {
+				if(s == s_max) {
+					if(x3 < point[index].getX())
+						index = i;
+				}
+			}
+		}
+		p = point[index];
+		return p;
+	}
+	
+	//插入排序
+	public void InsertionSort(int A[]) {
+		int n = A.length;
+		if(n == 0) {
+			System.out.println("数组为空，请确认输入");
+			System.exit(1);
+		}
+		for(int i = 1; i < n; i++) {
+			int j = i - 1;
+			int temp = A[i];
+			while(j >= 0 && A[j] > temp) {
+				A[j + 1] = A[j];
+				j--;
+			}
+			A[j + 1] = temp;
+		}
+	}
+	
+	//俄式乘法
+	public int RussainPeasantMethod(int n, int m) {
+		List<Integer> tailNum = new ArrayList<Integer>();
+		while(n != 1) {
+			//偶数
+			if(n % 2 == 0) {
+				n = n / 2;
+				m = 2 * m;
+			}
+			//奇数
+			else {
+				n = (n - 1) / 2;
+				tailNum.add(m);
+				m = 2 * m;
+			}
+		}
+		int result = m;
+		for(int i = 0; i < tailNum.size(); i++)
+			result += tailNum.get(i);
+		return result;
+	}
+	
+	
 }
