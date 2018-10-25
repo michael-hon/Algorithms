@@ -85,11 +85,16 @@ public class Test {
 //		int n = 4;
 //		int c = myalo.Large_Integer_Multiply(large_a, large_b, n);
 //		System.out.println(c);
+//		
+//		
+//		int result = myalo.RussainPeasantMethod(20, 26);
+//		System.out.println(result);
 		
 		
-		int result = myalo.RussainPeasantMethod(20, 26);
-		System.out.println(result);
 		
+		String S = "bacbabababacaababacaabc";
+		String p = "ababa";
+		myalo.KMP_Matcher(S, p);
 	}
 	
 	public void print(int A[]) {

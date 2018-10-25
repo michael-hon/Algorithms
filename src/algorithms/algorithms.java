@@ -546,5 +546,43 @@ public class algorithms {
 		return result;
 	}
 	
+	// KMP
+	public void KMP_Matcher(String S, String pattern) {
+		int n = S.length();
+		int m = pattern.length();
+		int i = 0;
+		int j = 0;
+		int [] shift_table = Compute_Prefix_Function(pattern);
+		for(; i < n; i++) {
+			while(j > 0 && S.charAt(i) != pattern.charAt(j))
+				j = shift_table[j - 1];
+			if(S.charAt(i) == pattern.charAt(j))
+				j++;
+			//匹配
+			if(j == m) {
+				System.out.println("在" + (i - m + 2) + "处匹配");
+				//寻找下一个匹配
+				j = shift_table[j - 1];
+			}
+		}
+	}
+	
+	// shift table，计算转移表
+	public int[] Compute_Prefix_Function(String p){
+		int l = p.length();
+		int[]shift_table = new int[l];//最大前后缀长度，第i个元素存储前i个子串的最大前后缀
+		int k = 0; //模式中当前子串最大前后缀长度
+		for(int i = 1; i < l; i++) {
+			while (k > 0 && p.charAt(k) != p.charAt(i)) 
+				k = shift_table[k - 1];
+			if(p.charAt(k) == p.charAt(i)) 
+				k++;
+			shift_table[i] = k;
+		}
+		return shift_table;
+	}
+	
+	//Boyer-Moore算法
+	 
 	
 }

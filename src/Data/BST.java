@@ -4,6 +4,12 @@ package Data;
 public class BST {
 	private BSTNode root; //根节点
 	private int count; //节点数量
+	
+	public BST(BSTNode root, int count) {
+		this.root = root;
+		this.count = count;
+	}
+	
 	public BSTNode getRoot() {
 		return root;
 	}
@@ -96,5 +102,16 @@ public class BST {
 		
 		return root;
 	}
+	
+	//输出树中所有节点,中序遍历
+	public void print(BSTNode root) {
+		if(root == null)
+			return;
+		print(root.getLeftChild());
+		System.out.print(root.getElement()+ "  ");
+		print(root.getRightChild());
+	}
+	
+	
 	
 }
