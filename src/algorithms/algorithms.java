@@ -546,43 +546,88 @@ public class algorithms {
 		return result;
 	}
 	
-	// KMP
-	public void KMP_Matcher(String S, String pattern) {
-		int n = S.length();
-		int m = pattern.length();
-		int i = 0;
-		int j = 0;
-		int [] shift_table = Compute_Prefix_Function(pattern);
-		for(; i < n; i++) {
-			while(j > 0 && S.charAt(i) != pattern.charAt(j))
-				j = shift_table[j - 1];
-			if(S.charAt(i) == pattern.charAt(j))
+//	// KMP
+//	public void KMP_Matcher(String S, String pattern) {
+//		int n = S.length();
+//		int m = pattern.length();
+//		int i = 0;
+//		int j = 0;
+//		int [] shift_table = Compute_Prefix_Function(pattern);
+//		for(; i < n; i++) {
+//			while(j > 0 && S.charAt(i) != pattern.charAt(j))
+//				j = shift_table[j - 1];
+//			if(S.charAt(i) == pattern.charAt(j))
+//				j++;
+//			//匹配
+//			if(j == m) {
+//				System.out.println("在" + (i - m + 2) + "处匹配");
+//				//寻找下一个匹配
+//				j = shift_table[j - 1];
+//			}
+//		}
+//	}
+//	
+//	// shift table，计算转移表
+//	public int[] Compute_Prefix_Function(String p){
+//		int l = p.length();
+//		int[]shift_table = new int[l];//最大前后缀长度，第i个元素存储前i个子串的最大前后缀
+//		int k = 0; //模式中当前子串最大前后缀长度
+//		for(int i = 1; i < l; i++) {
+//			while (k > 0 && p.charAt(k) != p.charAt(i)) 
+//				k = shift_table[k - 1];
+//			if(p.charAt(k) == p.charAt(i)) 
+//				k++;
+//			shift_table[i] = k;
+//		}
+//		return shift_table;
+//	}
+	
+	
+	//KMP算法：从前往后匹配
+	public void KMP_Matcher(String T, String P) {
+		int[]prefix = Compute_Prefix_Function(P);
+		int T_len = T.length();
+		int P_len = P.length();
+		int i = 0; //文本当前字符指针
+		int j = 0; //模式当前字符指针
+		while(i < T_len) {
+			//该循环做了两个操作：比较和滑动模式。第一判断条件是当模式滑动到0时，已经不能再滑动了，所以可以停止了，需要比较0和当前i,若两者相等，则i++,j++，否则只能滑动i++
+			//当第二个条件不符合时，则i++,j++，所以i++和j++操作可以放在一起
+			while(j > 0 && T.charAt(i) != P.charAt(j))
+				j = prefix[j - 1]; //是滑动前j-1子串最大前后缀长度
+			if(T.charAt(i) == P.charAt(j))
 				j++;
-			//匹配
-			if(j == m) {
-				System.out.println("在" + (i - m + 2) + "处匹配");
-				//寻找下一个匹配
-				j = shift_table[j - 1];
+			//当最后一个匹配时，j也会自增，所以j==p_len，而不是j==p_len-1
+			if(j == P_len) {
+				System.out.println("在第" + (i - P_len + 2) + "位置匹配了");
+				j = prefix[j - 1];
 			}
+			i++;
 		}
 	}
 	
-	// shift table，计算转移表
-	public int[] Compute_Prefix_Function(String p){
-		int l = p.length();
-		int[]shift_table = new int[l];//最大前后缀长度，第i个元素存储前i个子串的最大前后缀
-		int k = 0; //模式中当前子串最大前后缀长度
-		for(int i = 1; i < l; i++) {
-			while (k > 0 && p.charAt(k) != p.charAt(i)) 
-				k = shift_table[k - 1];
-			if(p.charAt(k) == p.charAt(i)) 
+	
+	//构造转移表
+	public int[] Compute_Prefix_Function(String P) {
+		int p_len = P.length();
+		int[]prefix = new int[p_len]; //第i个元素表示前i字符串的最大前后缀
+		int k = 0; //当前字符串的的最大前后缀的长度，注意，第k个不算入前缀，因为索引是从0开始]
+		//初始化,并没有前0个字符串
+		for(int i = 0; i < p_len; i++)
+			prefix[i] = 0;
+		//处理前i个字符串的最大前后缀
+		for(int i = 1; i < p_len; i++) {
+			while(k > 0 && P.charAt(k) != P.charAt(i))
+				k = prefix[k - 1];
+			if(P.charAt(k) == P.charAt(i)) {
 				k++;
-			shift_table[i] = k;
+				prefix[i] = k;
+			}
+			
+			//当没有最大前后缀，则不改变prefix[i]，继续保持为初始值0
 		}
-		return shift_table;
+		return prefix;
 	}
-	
-	//Boyer-Moore算法
 	 
 	
 }
