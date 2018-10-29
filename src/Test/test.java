@@ -2,12 +2,13 @@ package Test;
 
 import Data.BST;
 import Data.BSTNode;
+import Data.Heap;
 
 public class test {
 	public static void main(String[]args) {
 		test t = new test();
-		BST bst = t.createBST();
-		BSTNode root = bst.getRoot();
+//		BST bst = t.createBST();
+//		BSTNode root = bst.getRoot();
 //		bst.print(root);
 //		BSTNode node = bst.getMin(root);
 //		System.out.println(node.getElement());
@@ -15,6 +16,11 @@ public class test {
 //		bst.print(root);
 //		bst.remove(root, 2);
 //		bst.print(root);
+		Heap heap = new Heap();
+		int []H = new int[] {1, 2, 3, 4, 5, 6, 7};
+		heap.HeapBottom(H);
+		for(int i = 0; i < H.length; i++)
+			System.out.print(H[i] + " ");
 	}
 	
 	
