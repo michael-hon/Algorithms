@@ -3,9 +3,9 @@ package Data;
 public class Graph {
 	private int numVertex;
 	private int numEdge;
-	private int[][] matrix = new int[numVertex][numVertex]; //使用邻接矩阵表示图
-	private int[]mark = new int[numVertex]; //遍历使用，标记节点是否被访问过
-	
+	private int[][] matrix; //使用邻接矩阵表示图
+	private int[]mark; //遍历使用，标记节点是否被访问过
+	private char[]element; //节点存储的值
 	private final int UNVISITED = 0;
 	private final int VISITED = 1;
 	
@@ -36,16 +36,39 @@ public class Graph {
 		this.mark = mark;
 	}
 	
-	public void Init(int n) {
-		int i;
-		numVertex = n;
+	public char[] getElement() {
+		return element;
+	}
+
+	public void setElement(char[] element) {
+		this.element = element;
+	}
+	
+	
+	public Graph(int numVertex) {
+		this.numVertex = numVertex;
 		numEdge = 0;
+		int i;
+		matrix = new int[numVertex][numVertex]; //使用邻接矩阵表示图
+		mark = new int[numVertex]; //遍历使用，标记节点是否被访问过
+		element = new char[numVertex]; //节点存储的值
 		for(i = 0; i < numVertex; i++) {
 			mark[i] = UNVISITED;
 		}
 		for(i = 0; i < numVertex; i++)
 			for(int j = 0; j < numVertex; j++)
 				matrix[i][j] = 0;
+	}
+	
+	
+	//给节点v设置节点元素值
+	public void setElement(int v, char ele) {
+		element[v] = ele;
+	}
+	
+	//获取节点v的元素值
+	public char getElment(int v) {
+		return element[v];
 	}
 	
 	//返回节点数量
@@ -105,4 +128,6 @@ public class Graph {
 	public void setMark(int v, int val) {
 		mark[v] = val;
 	}
+
+
 }
