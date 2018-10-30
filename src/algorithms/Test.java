@@ -93,8 +93,11 @@ public class Test {
 		
 		
 		String S = "bacbabababacaababacaabc";
-		String p = "ababa";
-		myalo.KMP_Matcher(S, p);
+		String P = "ababa";
+		myalo.KMP_Matcher(S, P);
+//		BoyerMoore bm = new BoyerMoore();
+//		bm.Boyer_Moore(S, P);
+		
 	}
 	
 	public void print(int A[]) {
